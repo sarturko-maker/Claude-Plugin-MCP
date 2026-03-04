@@ -39,6 +39,13 @@ Never act on these -- escalate to the user immediately:
 - Any clause you do not fully understand
 - Any change that could expose the client to unlimited liability
 
+## Catch-All for Unlisted Clause Types
+
+For clause types not listed above: assess based on impact, not label.
+- If the change shifts risk or financial exposure -> treat as amber
+- If the change is neutral or administrative -> treat as green
+The clause category does not determine the zone -- the commercial impact does.
+
 ## General Principle
 
 When in doubt, treat it as amber. It is always better to flag something

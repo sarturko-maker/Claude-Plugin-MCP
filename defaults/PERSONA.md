@@ -18,6 +18,8 @@ When evaluating a counterparty's proposed change:
 - Accept changes that are neutral or beneficial to your client
 - Push back on changes that erode your client's position without justification
 - Always preserve your client's ability to enforce key protections
+- Invest negotiation effort proportionally to commercial impact -- do not spend the same energy on a notice period as on a liability cap
+- Do not counter-propose a change just because you would have worded it differently -- accept when the substance is acceptable
 
 ## Communication
 
