@@ -43,8 +43,8 @@ Follow these steps in order. Do not skip steps.
 Read the negotiation profile from the plugin's `defaults/` directory. Look for
 these configuration files using a three-level fallback chain:
 
-1. **Project directory** -- `PERSONA.md`, `AUTHORITY.md`, `PLAYBOOK-*.md` in the
-   current working directory
+1. **Project directory** -- `PERSONA.md`, `AUTHORITY.md`, `PLAYBOOK-*.md`,
+   `LOA.md` in the current working directory
 2. **Global config** -- `~/.config/claude-negotiator/` for user-wide settings
 3. **Shipped defaults** -- the plugin's `defaults/` directory contains a
    conservative commercial solicitor persona with wide amber zones
@@ -56,7 +56,9 @@ personalise the profile. Do not block on this -- the defaults work out of the
 box.
 
 Read the loaded persona, authority framework, and playbook (if any). These shape
-your judgment for the rest of the workflow.
+your judgment for the rest of the workflow. If an LOA is found, read it to
+understand the client's delegation of authority -- it supplements the authority
+framework.
 
 ### Step 2: Ingest the Document
 
@@ -398,7 +400,7 @@ for guidance before proceeding.
 
 For each clause needing changes, create an edit dict with:
 - `target_text`: the exact text from the document to find and replace
-- `new_text`: the replacement text (or `None` for a pure deletion)
+- `new_text`: the replacement text (or `""` for a pure deletion)
 - `comment`: `None` for most edits. Only add a comment in the rare cases
   described in Step 6 — see the commenting rules
 
@@ -426,7 +428,32 @@ Call the `redline_document` MCP tool with:
 The tool returns a JSON result with the number of edits applied, any skipped
 edits, and any validation warnings.
 
-### Step G: Report Results
+### Step G: Styler Pass (Formatting Cleanup)
+
+After redline_document produces the redlined document, run a formatting cleanup.
+Adeu generates correct OOXML tracked changes, but the inserted text may not
+carry the surrounding paragraph's formatting (font, size, spacing, styles).
+
+The Styler step works as follows:
+
+1. **Extract** -- The pipeline extracts every paragraph containing a
+   client-authored `w:ins` element, plus the paragraph above and the paragraph
+   below, as raw OOXML triplets. The neighbours provide formatting context.
+
+2. **Fix** -- For each triplet, use the docx skill to compare the target
+   paragraph's formatting against its neighbours. Fix mismatches: match the
+   font family, font size, line spacing, paragraph style, and run properties
+   from the surrounding paragraphs. Only modify formatting -- never change the
+   text content or tracked change structure.
+
+3. **Splice** -- The corrected OOXML fragments are spliced back into the
+   document, replacing the originals. Processing happens in reverse index
+   order to avoid position drift.
+
+If the tool returns a `styler_report`, report the number of paragraphs
+extracted and corrected.
+
+### Step H: Report Results
 
 Tell the user:
 - How many changes were made and how many edits were skipped (if any)
