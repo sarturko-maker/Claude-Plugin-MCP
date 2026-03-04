@@ -404,6 +404,49 @@ For each clause needing changes, create an edit dict with:
 - `comment`: `None` for most edits. Only add a comment in the rare cases
   described in Step 6 — see the commenting rules
 
+### Step D1: Edit Precision Rules
+
+When building your edit list, follow these rules to produce precise,
+word-level redlines:
+
+**Target the minimum changed span.** If you need to change one word in a
+sentence, set target_text to a phrase containing just that word plus enough
+surrounding context for unique matching (usually 5-15 words). Do not set
+target_text to the entire paragraph or sentence.
+
+**Do not rewrite what you are not changing.** If you need to add a proviso
+to the end of a clause, include the last few words as target_text and append
+your addition in new_text. Do not delete and rewrite the whole clause.
+
+**Do not include formatting markers.** Never include ** or _ in new_text.
+Formatting is preserved automatically from the original document.
+
+**Keep target_text as short as uniquely matchable.** The engine needs to find
+your target_text in the document. Include enough context to avoid ambiguity,
+but no more. A phrase of 5-15 words is usually right.
+
+WRONG -- rewriting a whole sentence to change one word:
+  target_text: "The Receiving Party shall keep all Confidential Information
+    strictly confidential and shall not disclose it to any third party"
+  new_text: "The Receiving Party agrees to maintain the confidentiality of
+    all Confidential Information and shall not disclose such information to
+    any third party without prior written consent"
+
+RIGHT -- targeting just the phrase that needs the addition:
+  target_text: "shall not disclose it to any third party"
+  new_text: "shall not disclose it to any third party without the prior
+    written consent of the Disclosing Party"
+
+WRONG -- replacing a defined term by rewriting the whole definition:
+  target_text: "Confidential Information means any information disclosed by
+    either party to the other party"
+  new_text: "Confidential Information means any information disclosed by the
+    Disclosing Party to the Receiving Party"
+
+RIGHT -- targeting just the phrase that differs:
+  target_text: "disclosed by either party to the other party"
+  new_text: "disclosed by the Disclosing Party to the Receiving Party"
+
 ### Step E: Commenting Rules
 
 The same commenting rules from Step 6 apply here. Most edits have `comment:
