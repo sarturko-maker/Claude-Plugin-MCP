@@ -111,6 +111,34 @@ Combine the user's instructions with:
 
 ### Step 5: Evaluate Each Change
 
+Before evaluating individual changes, assess the negotiation context:
+
+**Infer the negotiation stage** from the document. Count tracked change layers
+and unique authors in the state of play. One counterparty author with no prior
+client changes suggests a first response. Multiple layers of changes from
+different authors suggests later rounds. If the user says "final round" or
+"closing", treat as final round. This is a judgment call -- use "approximately"
+not "exactly".
+
+**Calibrate your posture to the round:**
+- Round 1: Set positions. Counter freely where substance is wrong. Comment to
+  establish reasoning on material points.
+- Round 2+: Narrow the gaps. Use accept-with-amendments for near-agreement.
+  Resolve threads where the issue is settled.
+- Final round: Bias heavily toward acceptance. Only counter on deal-breakers.
+  Signal convergence.
+
+**For each change, apply the materiality test first:** Does this change shift
+risk, financial exposure, or commercial balance? Apply the same test to
+insertions and deletions. Then calibrate effort proportionally -- high-impact
+clauses (liability, indemnity, IP) warrant detailed counter-proposals with
+reasoning. Low-impact clauses (notice mechanics, boilerplate admin) warrant
+light-touch treatment or acceptance.
+
+**Boilerplate trap:** Read boilerplate changes carefully. Standard-looking
+language can materially weaken protections. Don't accept boilerplate changes
+on autopilot.
+
 Go through every `Chg:N` and `Com:N` in the state of play. For each one, decide
 which approach to use:
 
@@ -118,8 +146,7 @@ which approach to use:
 Delete their text inside their insertion and insert your alternative. Their
 original tracked change stays visible. The counterparty sees: their proposal,
 your deletion of it, your alternative. Full audit trail. Use this when you
-disagree with what they wrote. This is the most common approach during active
-negotiation.
+disagree with what they wrote. More common in early rounds when setting positions.
 
 **APPROACH 2 -- ACCEPT WITH AMENDMENTS:**
 Accept their insertion so it becomes clean text, then make targeted tracked
@@ -143,6 +170,11 @@ Accept their change outright.
 
 Do not default to any single approach. Evaluate each change on its merits and
 pick the approach that best serves the client's position and negotiation strategy.
+Do not counter just because you would have worded it differently -- accept when
+the substance is acceptable, only counter when the substance is wrong.
+
+If the playbook has a position on a clause type, follow it. General contextual
+judgment applies only to clause types the playbook does not cover.
 
 ### Step 5a: Authority Check
 
@@ -181,6 +213,19 @@ Most tracked changes have NO comment. The markup speaks for itself.
 
 If you are unsure whether a comment is needed, do not add one.
 
+**Comment reasoning by type:**
+When you do comment, match the reasoning to the clause category:
+- Financial clauses (payment, liability, indemnity): explain the commercial
+  rationale -- what this costs, what exposure it creates
+- Structural/procedural clauses (termination mechanics, notice, assignment):
+  reference market practice -- "This is unusual for contracts of this type"
+- Genuine legal issues (regulatory, enforceability, jurisdiction): use legal
+  reasoning -- but only when it genuinely is a legal issue, not a commercial one
+
+When helpful, suggest a path forward: "We would accept this if [condition]."
+This is especially valuable in later rounds to signal flexibility and accelerate
+agreement.
+
 A first-pass redline of a 15-clause contract should typically have 0–3
 comments, not 11. Over-commenting is unprofessional and signals inexperience.
 
@@ -190,6 +235,57 @@ silent accepts. The counterparty needs to see you reviewed it deliberately.
 Never use formulaic headers like "BUYER'S POSITION:", "RATIONALE:", or any
 structured template. Comments read like a solicitor wrote them — concise,
 professional, no formatting.
+
+**Counterparty response vs first-pass:** The commenting rules above apply to
+both workflows, but the expected volume differs. In counterparty response,
+you have a counterparty's positions to respond to -- commenting on countered
+clauses where the reasoning isn't obvious from the markup is appropriate and
+expected. In first-pass redlining, you have no counterparty -- the 0-3 comment
+guideline applies strictly.
+
+### Step 6a: Reply Substance Rules
+
+When replying to counterparty comments, every reply must be substantive and
+concise:
+
+**Do not write:**
+- Formulaic acknowledgments: "Noted", "We will consider this",
+  "Acknowledged and understood"
+- Over-explanations: long replies restating the entire position or repeating
+  what is visible in the markup
+
+**Do write:**
+- Reference the action taken on the markup: "We've accepted with amendments --
+  see revised wording" helps the counterparty connect the comment thread to the
+  tracked change
+- Substantive reasoning: why this position, what the client gains, what risk is
+  being managed
+- Path forward when helpful: "We'd accept this if [condition]" -- especially
+  in later rounds to signal flexibility
+
+Keep replies concise. A solicitor's reply is typically one to two sentences.
+
+### Step 6b: Thread Resolution Strategy
+
+**Resolve a thread when:**
+- You accept the change the comment relates to -- the issue is moot
+- You counter-propose and the counter directly addresses the concern raised
+- You reply and the reply settles the issue -- both sides have stated positions
+  and yours resolves the point
+- It is your own thread from a prior round and the counterparty's response
+  addresses it -- keep the document clean
+
+**Reply and leave open when:**
+- Your response does not directly address the specific concern raised
+- The issue requires further discussion or user input
+- You are flagging something for the counterparty to consider, not settling it
+
+**Resolution test:** Before resolving any thread, ask: "Would a solicitor
+consider this issue settled based on the response?" If yes, resolve. If not,
+reply and leave open.
+
+Do not resolve threads just to tidy up. An open thread signals an unresolved
+issue -- that is useful information for the counterparty.
 
 ### Step 7: Choose Autonomy Mode
 
@@ -314,7 +410,10 @@ None` — that is normal and expected.
 For first-pass redlines: almost every edit should have `comment: None`. You have
 no counterparty comments to reply to, and the markup speaks for itself. A
 15-clause contract should typically produce 0–3 comments total. If you find
-yourself commenting on more than that, you are over-commenting.
+yourself commenting on more than that, you are over-commenting. When you do add
+one of these rare comments, match the reasoning type to the clause category --
+commercial rationale for financial clauses, market practice for structural
+clauses.
 
 ### Step F: Call `redline_document`
 
