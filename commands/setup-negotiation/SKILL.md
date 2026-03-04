@@ -50,15 +50,29 @@ One or two questions about comfort with autonomous action. For example:
 
 Use answers to adjust the boundary between green and amber zones.
 
+### 5. Letter of Authority (Optional)
+
+Do you have a Letter of Authority (LOA) to upload? This is the document from
+your client delegating negotiation authority -- it supplements the authority
+framework by showing what the client has authorised.
+
+If yes, you can either:
+- **Paste the content** -- it will be saved as LOA.md in your config directory
+- **Provide a file path** -- it will be copied to your config directory as-is
+
+If no, skip this step. The authority framework works without it.
+
 ## After the Conversation
 
 Based on the answers, generate tailored `PERSONA.md` and `AUTHORITY.md`
-content. Then save using the `write_global_config` function (via the MCP
-tools or directly) to `~/.config/claude-negotiator/`.
+content. If the user provided an LOA, save it to `~/.config/claude-negotiator/`
+as `LOA.md` (for pasted content) or copy the file as-is (for file paths). Then
+save using the `write_global_config` function (via the MCP tools or directly)
+to `~/.config/claude-negotiator/`.
 
 Confirm to the user that the profile has been saved and will be used for
 all future negotiations. Mention they can also create project-level
-overrides by placing `PERSONA.md`, `AUTHORITY.md`, or `PLAYBOOK-*.md`
+overrides by placing `PERSONA.md`, `AUTHORITY.md`, `PLAYBOOK-*.md`, or `LOA.md`
 files in their project directory.
 
 ## Defaults Reference

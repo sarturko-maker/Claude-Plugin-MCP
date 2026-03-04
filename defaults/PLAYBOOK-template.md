@@ -36,3 +36,10 @@ PLAYBOOK-supply-agreement.md), and place it in your project directory.
 ## Your Clauses
 
 Add your clause positions below following the pattern above.
+
+## Catch-All Guidance
+
+For clauses not covered above, apply the materiality test: if the change shifts
+risk or financial exposure, counter-propose; if neutral or administrative,
+accept. This mirrors the authority framework's catch-all principle -- the clause
+category does not determine the response, the commercial impact does.

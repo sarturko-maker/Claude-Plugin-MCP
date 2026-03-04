@@ -1,7 +1,7 @@
 {
   "name": "contract-negotiator",
   "description": "Agentic contract negotiation assistant -- reviews counterparty redlines with layered Track Changes, or creates first-pass redlines on clean documents. Produces native Word tracked changes with correct author attribution and full audit trail.",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "author": {
     "name": "sarturko-maker"
   },
