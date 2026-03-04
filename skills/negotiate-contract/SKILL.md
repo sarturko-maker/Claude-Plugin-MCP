@@ -156,30 +156,40 @@ Before finalising decisions, check each one against the authority framework:
 If any decisions fall in amber or red, present them to the user and wait for
 guidance before proceeding.
 
-### Step 6: Commenting Behaviour
+### Step 6: Commenting Rules — Read This Carefully
 
-Follow these rules for when to add comments. Behave like a thoughtful solicitor,
-not an AI that annotates everything.
+Most tracked changes have NO comment. The markup speaks for itself.
 
-- **Accepted changes:** Always add a brief comment -- "Accepted" or similar. No
-  silent accepts. The counterparty needs to see you reviewed it deliberately.
-- **Counterparty left a comment:** Always reply. Someone asked a question or
-  made a point -- ignoring it is unprofessional. Respond substantively.
-- **Counter-proposals:** Comment only if an explanation would be helpful.
-  Straightforward counter-proposals (e.g., reverting to original wording) often
-  speak for themselves. Add a comment when the reasoning is non-obvious or when
-  the commercial rationale needs explaining.
-- **First-pass redlines with no counterparty comment:** Use judgment based on
-  materiality. Many redlines are returned with no comments at all -- that is
-  normal. Comment when the change is material and your reasoning adds value.
-  Do not comment on routine markup.
+**DO NOT comment when:**
+- The change is self-explanatory from the markup (most are — "30 days" → "45
+  days" needs no explanation)
+- The change is a standard buyer/seller position any commercial lawyer would
+  recognise
+- The change is mechanical (cross-references, defined terms, formatting)
+- You are making a first-pass redline with no counterparty comments to reply to
+
+**ONLY comment when:**
+- Your position is reserved and you need instructions from your client before
+  finalising
+- Something is unclear in the original drafting and you need the counterparty to
+  clarify
+- The change is unusual or non-standard and the reasoning isn't obvious from the
+  markup
+- You are flagging a material risk that the recipient might not spot from the
+  tracked change alone
+- You are replying to an existing comment from the counterparty
+
+If you are unsure whether a comment is needed, do not add one.
+
+A first-pass redline of a 15-clause contract should typically have 0–3
+comments, not 11. Over-commenting is unprofessional and signals inexperience.
+
+**Accepted changes:** Always add a brief comment — "Accepted" or similar. No
+silent accepts. The counterparty needs to see you reviewed it deliberately.
 
 Never use formulaic headers like "BUYER'S POSITION:", "RATIONALE:", or any
-structured template in comments. Comments read like a solicitor wrote them --
-concise, professional, no formatting.
-
-The goal is a document the counterparty can read naturally, with comments where
-they add value and silence where the markup speaks for itself.
+structured template. Comments read like a solicitor wrote them — concise,
+professional, no formatting.
 
 ### Step 7: Choose Autonomy Mode
 
@@ -293,23 +303,18 @@ for guidance before proceeding.
 For each clause needing changes, create an edit dict with:
 - `target_text`: the exact text from the document to find and replace
 - `new_text`: the replacement text (or `None` for a pure deletion)
-- `comment`: a professional rationale explaining the change, or `None` when
-  the markup speaks for itself
+- `comment`: `None` for most edits. Only add a comment in the rare cases
+  described in Step 6 — see the commenting rules
 
-### Step E: Commenting Behaviour
+### Step E: Commenting Rules
 
-Follow these rules for when to attach comments to your edits:
+The same commenting rules from Step 6 apply here. Most edits have `comment:
+None` — that is normal and expected.
 
-- Comment only when the commercial rationale is non-obvious or the change is
-  material enough to warrant explanation
-- Many edits are returned with `comment: None` -- that is normal and expected
-- Never use formulaic headers ("BUYER'S POSITION:", "RATIONALE:", structured
-  templates)
-- Comments read like a solicitor wrote them -- concise, professional, no
-  formatting
-- First-pass redlines with no counterparty context: use judgment based on
-  materiality. Many redlines are returned with no comments at all -- that is
-  normal
+For first-pass redlines: almost every edit should have `comment: None`. You have
+no counterparty comments to reply to, and the markup speaks for itself. A
+15-clause contract should typically produce 0–3 comments total. If you find
+yourself commenting on more than that, you are over-commenting.
 
 ### Step F: Call `redline_document`
 
@@ -366,5 +371,6 @@ thing at a time.
   agrees with it. Accepting removes the markup permanently.
 - **The document must open in Word without a repair dialog.** If the output
   has validation warnings, investigate before delivering.
-- **Do not over-comment.** A document covered in comments is harder to read
-  than one with well-placed, substantive annotations.
+- **Do not over-comment.** Most tracked changes need no comment. A first-pass
+  redline of a 15-clause contract should have 0–3 comments. If you are adding
+  more, you are doing it wrong.
