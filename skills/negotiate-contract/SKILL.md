@@ -100,6 +100,43 @@ Call the `get_state_of_play` MCP tool. This returns a JSON object with:
 
 This is your change-by-change working list.
 
+### Step 3a: Comparison Report
+
+Before reading the user's instructions or evaluating individual changes, produce
+a comparison report -- a solicitor's briefing note summarising what the
+counterparty did. This gives the user a clear picture before any action is taken.
+
+**Group counterparty actions into three categories:**
+
+**(1) Accepted your positions** -- split into two subsections:
+
+- **Explicitly accepted** -- the counterparty accepted a client tracked change
+  (markup removed, text incorporated into the clean document). These are clear
+  agreements.
+- **Not objected to (treated as agreed)** -- the counterparty left a client
+  redline untouched with no counter-proposal, comment, or deletion. Silence is
+  treated as agreement per standard contract negotiation practice. Flag these
+  distinctly so the user can override specific items if silence should not be
+  read as agreement in context.
+
+**(2) Pushed back** -- the counterparty counter-proposed, deleted client text,
+or made competing changes to clauses with existing client markup. These are
+contested positions requiring evaluation.
+
+**(3) Added new** -- new tracked changes or comments from the counterparty that
+were not responding to prior client markup. These are fresh positions introduced
+by the counterparty.
+
+**Format:** Each item has a clause reference and brief description. Include your
+preliminary recommendation (accept / counter / amend) alongside each item. The
+report should be scannable, not a wall of text -- it reads like a solicitor's
+briefing note to the partner: "Here's what they did, here's what I recommend."
+
+**Wait for confirmation:** Present the comparison report to the user and WAIT
+for confirmation before proceeding. The user may override silence-as-agreement
+for specific items, adjust your preliminary recommendations, or give additional
+instructions. Do not proceed to Step 4 until the user confirms.
+
 ### Step 4: Read the User's Instructions
 
 The user's message contains their negotiation instructions -- what they want,
@@ -112,6 +149,13 @@ Combine the user's instructions with:
 - The **playbook** (clause-by-clause positions, if provided)
 
 ### Step 5: Evaluate Each Change
+
+**Agreed positions:** For every position identified as agreed in the comparison
+report (both explicitly accepted and silence-as-agreement, unless the user
+overrode specific items), accept the tracked change to clean up the markup and
+add a brief confirming comment -- "Agreed" or similar, no elaboration. Settled
+text becomes clean document text. Then proceed to evaluate the remaining
+contested and new changes below.
 
 Before evaluating individual changes, assess the negotiation context:
 
