@@ -51,9 +51,10 @@ these configuration files using a three-level fallback chain:
 
 Read whichever files are found (project overrides global, global overrides
 shipped defaults). If no custom config exists and this is the user's first
-negotiation, briefly offer to run `/contract-negotiator:setup-negotiation` to
-personalise the profile. Do not block on this -- the defaults work out of the
-box.
+negotiation, mention that they can customise behaviour by placing PERSONA.md,
+AUTHORITY.md, or PLAYBOOK-*.md files in the project directory or
+~/.config/claude-negotiator/. Do not block on this -- the defaults work out of
+the box.
 
 Read the loaded persona, authority framework, and playbook (if any). These shape
 your judgment for the rest of the workflow. If an LOA is found, read it to
