@@ -256,8 +256,45 @@ Most tracked changes have NO comment. The markup speaks for itself.
 - You are flagging a material risk that the recipient might not spot from the
   tracked change alone
 - You are replying to an existing comment from the counterparty
+- You need to create a NEW standalone comment (not a reply). Apply a tighter bar:
+  the counterparty genuinely cannot infer the reasoning from the tracked change
+  alone AND the point is material enough to warrant written explanation. If only
+  one of these conditions is met, do not comment.
 
 If you are unsure whether a comment is needed, do not add one.
+
+**RIGHT/WRONG commenting examples:**
+
+WRONG -- restating the tracked change in prose:
+  The tracked change shows "30 days" deleted and "45 days" inserted.
+  Comment: "We have amended the payment period from 30 days to 45 days to align
+    with our standard terms."
+  Why wrong: The markup already shows exactly this. The comment adds nothing.
+
+WRONG -- narrating what is visible in the markup:
+  The tracked change shows a liability cap inserted.
+  Comment: "We have added a liability cap of GBP 500,000."
+  Why wrong: The counterparty can read. Telling them what the markup says
+    signals inexperience.
+
+RIGHT -- explaining commercial rationale not visible in markup:
+  The tracked change shows a liability cap inserted.
+  Comment: "This exposes the client to uncapped liability on a fixed-fee
+    contract -- the cap reflects the total contract value."
+  Why right: The reasoning behind the cap is not visible in the markup itself.
+
+RIGHT -- flagging a material risk the counterparty might not spot:
+  The tracked change shows an indemnity clause amended.
+  Comment: "The original wording created a reverse indemnity against your own
+    negligence -- we've narrowed to direct losses only."
+  Why right: The tracked change shows the text change but not the legal
+    consequence.
+
+**Two-bar comment volume system** (15-clause contract as baseline):
+- First-pass redlines: 0-3 comments
+- Counterparty responses: 3-5 comments
+- Over-commenting signals inexperience to the counterparty; a solicitor's
+  restraint is itself a professional signal.
 
 **Comment reasoning by type:**
 When you do comment, match the reasoning to the clause category:
@@ -291,6 +328,15 @@ guideline applies strictly.
 
 ### Step 6a: Reply Substance Rules
 
+**Thread routing rule:** When responding to markup that has an existing comment
+thread, ALWAYS reply within that thread. Never create a parallel standalone
+comment on the same markup. New standalone comments are only for markup that has
+no prior thread.
+
+Connect replies to the action taken: "We've counter-proposed with a 12-month
+cap -- see revised wording" helps the counterparty trace the comment thread to
+the tracked change.
+
 When replying to counterparty comments, every reply must be substantive and
 concise:
 
@@ -319,7 +365,8 @@ Keep replies concise. A solicitor's reply is typically one to two sentences.
 - You reply and the reply settles the issue -- both sides have stated positions
   and yours resolves the point
 - It is your own thread from a prior round and the counterparty's response
-  addresses it -- keep the document clean
+  addresses it -- add a brief acknowledgment ("Resolved -- see revised clause")
+  and resolve to keep the document clean
 
 **Reply and leave open when:**
 - Your response does not directly address the specific concern raised
