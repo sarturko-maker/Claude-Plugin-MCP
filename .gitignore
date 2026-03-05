@@ -1,0 +1,38 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg-info/
+*.egg
+dist/
+build/
+
+# Testing
+.pytest_cache/
+htmlcov/
+.coverage
+.coverage.*
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Environment
+.env
+.env.*
+venv/
+.venv/
+
+# Output (generated test documents)
+output/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Planning (internal project management)
+# .planning/ is intentionally tracked

@@ -1,10 +1,11 @@
 {
   "name": "contract-negotiator",
   "description": "Agentic contract negotiation assistant -- reviews counterparty redlines with layered Track Changes across multiple negotiation rounds, or creates first-pass redlines on clean documents. Produces native Word tracked changes with correct author attribution, comparison reports, and full audit trail.",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "author": {
     "name": "sarturko-maker"
   },
   "license": "MIT",
-  "repository": "https://github.com/sarturko-maker/Claude-Plugin"
+  "repository": "https://github.com/sarturko-maker/Claude-Plugin",
+  "privacy_policy": "https://github.com/sarturko-maker/Claude-Plugin/blob/main/PRIVACY.md"
 }

@@ -20,6 +20,98 @@ instructions. You evaluate the document, decide what changes to make, and
 produce a properly redlined `.docx` with Track Changes and correct author
 attribution.
 
+## Triggering Test Cases
+
+Use these phrases to verify the skill triggers correctly.
+
+**Should trigger:**
+- "Review this contract and redline it"
+- "Respond to the seller's tracked changes"
+- "I need to negotiate this NDA"
+- "Help me push back on these counterparty redlines"
+- "Redline this agreement -- focus on liability and indemnity"
+- "Create first-pass markup on this sales agreement"
+- "The other side sent back their counter-proposals, help me respond"
+- "Review and mark up this contract as buyer's counsel"
+- "Go through this draft and propose amendments"
+- "I've got a redlined contract back from the vendor, what should we counter?"
+
+**Should NOT trigger:**
+- "Create a new Word document from scratch"
+- "Help me format this document"
+- "Summarise this contract for me"
+- "What does clause 5 mean?"
+- "Convert this PDF to Word"
+- "Help me write a letter"
+- "Proofread this document for typos"
+
+## Prompt Examples
+
+### Example 1: First-Pass Review of a Sales Agreement
+
+User says: "/negotiate -- Review the attached sales agreement from the seller's
+perspective as buyer's counsel. Focus on: liability caps (push for mutual caps),
+indemnification (require fundamental rep carve-outs), and termination (add
+termination for convenience with 30-day notice). Accept standard boilerplate
+provisions."
+
+Actions:
+1. Load negotiation configuration (persona, authority, playbook)
+2. Ingest document -- detect clean document (no CriticMarkup markers)
+3. Route to First-Pass Redlining Workflow (Steps A-H)
+4. Analyse contract clause by clause against instructions
+5. Build edit list with surgical word-level diffs
+6. Call redline_document MCP tool
+7. Run Styler pass for formatting cleanup
+
+Result: Redlined .docx with tracked changes attributed to the client, 0-3
+professional comments on material changes only.
+
+### Example 2: Responding to Counterparty Redlines
+
+User says: "/negotiate -- Respond to the seller's counter-proposals. They've
+pushed back on the liability cap and added a non-compete. Accept their
+formatting changes and boilerplate updates. Push back hard on the non-compete
+(overly broad, should be limited to 12 months and direct competitors only).
+Hold firm on mutual liability caps."
+
+Actions:
+1. Load negotiation configuration
+2. Ingest document -- detect tracked changes (CriticMarkup markers present)
+3. Route to Counterparty Response Workflow (Steps 3-10)
+4. Build state of play with every pending change
+5. Present comparison report: what they accepted, pushed back on, added new
+6. WAIT for user confirmation before proceeding
+7. Evaluate each change against instructions and authority framework
+8. Call execute_pipeline MCP tool with per-change decisions
+9. Run Styler pass for formatting cleanup
+
+Result: Redlined .docx with layered counter-proposals on top of counterparty
+markup, comparison report presented before action, 3-5 professional comments.
+
+### Example 3: Multi-Round Final Positions
+
+User says: "/negotiate -- Final round. Accept the seller's position on the
+liability cap at 2x annual fees -- it's commercially reasonable. Counter-propose
+on the non-compete: accept 18-month duration but narrow the geographic scope to
+the UK only (not worldwide). Add a comment explaining this is our final position
+on the non-compete."
+
+Actions:
+1. Load negotiation configuration
+2. Ingest document -- detect multi-round tracked changes
+3. Route to Counterparty Response Workflow
+4. Build state of play -- identify multiple author layers
+5. Present comparison report with final-round posture (bias toward acceptance)
+6. WAIT for user confirmation
+7. Evaluate changes with final-round calibration: accept where commercially
+   reasonable, counter only on deal-breakers
+8. Call execute_pipeline with final-round decisions
+9. Run Styler pass
+
+Result: Redlined .docx with final positions layered on multi-round markup,
+signalling convergence. One targeted comment on the non-compete as instructed.
+
 ## How Lawyers Negotiate Contracts
 
 When a counterparty sends back a redlined contract, their tracked changes stay
@@ -235,12 +327,12 @@ Before finalising decisions, check each one against the authority framework:
 If any decisions fall in amber or red, present them to the user and wait for
 guidance before proceeding.
 
-### Step 6: Commenting Rules — Read This Carefully
+### Step 6: Commenting Rules -- Read This Carefully
 
 Most tracked changes have NO comment. The markup speaks for itself.
 
 **DO NOT comment when:**
-- The change is self-explanatory from the markup (most are — "30 days" → "45
+- The change is self-explanatory from the markup (most are -- "30 days" to "45
   days" needs no explanation)
 - The change is a standard buyer/seller position any commercial lawyer would
   recognise
@@ -310,14 +402,14 @@ When helpful, suggest a path forward: "We would accept this if [condition]."
 This is especially valuable in later rounds to signal flexibility and accelerate
 agreement.
 
-A first-pass redline of a 15-clause contract should typically have 0–3
+A first-pass redline of a 15-clause contract should typically have 0-3
 comments, not 11. Over-commenting is unprofessional and signals inexperience.
 
-**Accepted changes:** Always add a brief comment — "Accepted" or similar. No
+**Accepted changes:** Always add a brief comment -- "Accepted" or similar. No
 silent accepts. The counterparty needs to see you reviewed it deliberately.
 
 Never use formulaic headers like "BUYER'S POSITION:", "RATIONALE:", or any
-structured template. Comments read like a solicitor wrote them — concise,
+structured template. Comments read like a solicitor wrote them -- concise,
 professional, no formatting.
 
 **Counterparty response vs first-pass:** The commenting rules above apply to
@@ -494,7 +586,7 @@ For each clause needing changes, create an edit dict with:
 - `target_text`: the exact text from the document to find and replace
 - `new_text`: the replacement text (or `""` for a pure deletion)
 - `comment`: `None` for most edits. Only add a comment in the rare cases
-  described in Step 6 — see the commenting rules
+  described in Step 6 -- see the commenting rules
 
 ### Step D1: Edit Precision Rules
 
@@ -542,11 +634,11 @@ RIGHT -- targeting just the phrase that differs:
 ### Step E: Commenting Rules
 
 The same commenting rules from Step 6 apply here. Most edits have `comment:
-None` — that is normal and expected.
+None` -- that is normal and expected.
 
 For first-pass redlines: almost every edit should have `comment: None`. You have
 no counterparty comments to reply to, and the markup speaks for itself. A
-15-clause contract should typically produce 0–3 comments total. If you find
+15-clause contract should typically produce 0-3 comments total. If you find
 yourself commenting on more than that, you are over-commenting. When you do add
 one of these rare comments, match the reasoning type to the clause category --
 commercial rationale for financial clauses, market practice for structural
@@ -633,5 +725,5 @@ thing at a time.
 - **The document must open in Word without a repair dialog.** If the output
   has validation warnings, investigate before delivering.
 - **Do not over-comment.** Most tracked changes need no comment. A first-pass
-  redline of a 15-clause contract should have 0–3 comments. If you are adding
+  redline of a 15-clause contract should have 0-3 comments. If you are adding
   more, you are doing it wrong.
