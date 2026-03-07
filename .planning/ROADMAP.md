@@ -31,12 +31,12 @@ Audit every file in the packaged plugin for correctness and currency, produce ac
   3. README.md accurately describes the plugin's capabilities, install steps, and usage -- every claim verified against actual code
   4. DISCLAIMER.md, SECURITY.md, CONTRIBUTING.md, and PRIVACY.md exist with correct content and links pointing to Claude-Plugin-MCP
   5. Source files (yolo-negotiation command, defaults/) are synced back to ~/Claude-Plugin so both repos match
-**Plans**: TBD
+**Plans:** 3 plans
 
 Plans:
-- [ ] 30-01: TBD
-- [ ] 30-02: TBD
-- [ ] 30-03: TBD
+- [ ] 30-01-PLAN.md -- Cleanup stale files, bundle MCP server source, fix all configuration
+- [ ] 30-02-PLAN.md -- Update all documentation (README, SECURITY, CONTRIBUTING, PRIVACY, DISCLAIMER)
+- [ ] 30-03-PLAN.md -- Sync commands/defaults to source repo and verify SKILL.md
 
 ### Phase 31: Prepare and Push to GitHub
 **Goal**: The plugin is live on GitHub at sarturko-maker/Claude-Plugin-MCP with a clean, professional appearance
