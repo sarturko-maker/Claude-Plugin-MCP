@@ -487,6 +487,47 @@ Use supervised mode when:
 - The user explicitly asks to review before execution
 - The negotiation is high-value or involves unfamiliar clause types
 
+### Step 7a: Input Validation Rules
+
+Before constructing your action list, follow these rules. The pipeline
+validates all actions upfront and rejects the entire batch if any rule is
+violated. Getting it right the first time avoids a wasted round-trip.
+
+**Rule 1: counter_propose requires non-empty replacement_text**
+
+A counter-proposal deletes the counterparty's text and inserts your
+alternative. Empty replacement_text produces a deletion with no alternative --
+that violates the audit trail principle.
+
+WRONG:
+```json
+{"change_id": "Chg:1", "action": "counter_propose", "replacement_text": ""}
+```
+
+RIGHT:
+```json
+{"change_id": "Chg:1", "action": "counter_propose", "replacement_text": "within 45 days of receipt of invoice"}
+```
+
+**Rule 2: No accept + counter_propose conflict on the same ID**
+
+You cannot both accept and counter-propose the same change. Pick one.
+
+WRONG: both accept and counter_propose for Chg:1 in the same batch.
+
+RIGHT: one action per change ID -- either accept it or counter-propose it.
+
+**Rule 3: Change IDs must exist in the document**
+
+Use only `Chg:N` and `Com:N` IDs returned by `get_state_of_play`. Do not
+fabricate IDs. The pipeline checks every ID against the document state and
+rejects unknown references.
+
+**Rule 4: Valid action types only**
+
+The pipeline accepts these action types: `accept`, `counter_propose`,
+`add_comment`, `reply`, `resolve`. Any other action type will be rejected.
+
 ### Step 8: Execute the Pipeline
 
 Call the `execute_pipeline` MCP tool with:
@@ -515,22 +556,23 @@ carry the surrounding paragraph's formatting (font, size, spacing, styles).
 
 The Styler step works as follows:
 
-1. **Extract** -- The pipeline extracts every paragraph containing a
-   client-authored `w:ins` element, plus the paragraph above and the paragraph
-   below, as raw OOXML triplets. The neighbours provide formatting context.
+1. **Extract** -- Call `extract_styler_triplets` with the output document path
+   and the client author name. This returns a JSON list of OOXML triplets --
+   each containing the target paragraph (with client-authored tracked changes)
+   plus the paragraph above and below as formatting context.
 
 2. **Fix** -- For each triplet, use the docx skill to compare the target
    paragraph's formatting against its neighbours. Fix mismatches: match the
    font family, font size, line spacing, paragraph style, and run properties
    from the surrounding paragraphs. Only modify formatting -- never change the
-   text content or tracked change structure.
+   text content or tracked change structure. Build a list of corrected fragment
+   dicts, each with `paragraph_index` and `corrected_xml`.
 
-3. **Splice** -- The corrected OOXML fragments are spliced back into the
-   document, replacing the originals. Processing happens in reverse index
-   order to avoid position drift.
+3. **Splice** -- Call `splice_styler_fragments` with the output document path
+   and the list of corrected fragments. This replaces the original paragraphs
+   in the document, processing in reverse index order to avoid position drift.
 
-If the pipeline returns a `styler_report`, report the number of paragraphs
-extracted and corrected.
+If no triplets are extracted (empty list), skip steps 2 and 3.
 
 ### Step 10: Report Results
 
@@ -663,22 +705,23 @@ carry the surrounding paragraph's formatting (font, size, spacing, styles).
 
 The Styler step works as follows:
 
-1. **Extract** -- The pipeline extracts every paragraph containing a
-   client-authored `w:ins` element, plus the paragraph above and the paragraph
-   below, as raw OOXML triplets. The neighbours provide formatting context.
+1. **Extract** -- Call `extract_styler_triplets` with the output document path
+   and the client author name. This returns a JSON list of OOXML triplets --
+   each containing the target paragraph (with client-authored tracked changes)
+   plus the paragraph above and below as formatting context.
 
 2. **Fix** -- For each triplet, use the docx skill to compare the target
    paragraph's formatting against its neighbours. Fix mismatches: match the
    font family, font size, line spacing, paragraph style, and run properties
    from the surrounding paragraphs. Only modify formatting -- never change the
-   text content or tracked change structure.
+   text content or tracked change structure. Build a list of corrected fragment
+   dicts, each with `paragraph_index` and `corrected_xml`.
 
-3. **Splice** -- The corrected OOXML fragments are spliced back into the
-   document, replacing the originals. Processing happens in reverse index
-   order to avoid position drift.
+3. **Splice** -- Call `splice_styler_fragments` with the output document path
+   and the list of corrected fragments. This replaces the original paragraphs
+   in the document, processing in reverse index order to avoid position drift.
 
-If the tool returns a `styler_report`, report the number of paragraphs
-extracted and corrected.
+If no triplets are extracted (empty list), skip steps 2 and 3.
 
 ### Step H: Report Results
 
@@ -702,14 +745,31 @@ These tools are provided by the `negotiation-pipeline` MCP server:
 | `redline_document` | Apply tracked changes to a clean document (first-pass redlining) |
 | `accept_changes` | Accept specific tracked changes (granular) |
 | `counter_propose_changes` | Layer counter-proposals (granular) |
-| `add_comments` | Add standalone comments (granular) |
+| `add_comments` | Add standalone comments (granular) -- supports `ooxml:NNN` anchors |
 | `reply_to_comments` | Reply to comment threads (granular) |
 | `resolve_comments` | Mark comment threads resolved (granular) |
+| `extract_styler_triplets` | Extract client-authored paragraphs with OOXML context for formatting review |
+| `splice_styler_fragments` | Splice corrected OOXML fragments back into the document |
 
 Use `execute_pipeline` for counterparty-response workflows. Use
 `redline_document` for first-pass redlining of clean documents. The granular
 tools exist for targeted single-action operations when the user wants to do one
 thing at a time.
+
+### ID Stability When Chaining Granular Tools
+
+**IMPORTANT:** After `accept_changes` or `counter_propose_changes`, the `Chg:N`
+sequential IDs are renumbered in the output file. If you need to call
+`add_comments` after a mutation step, do NOT use `Chg:N` IDs from a previous
+step's state of play -- they will anchor to the wrong tracked changes.
+
+Instead, use `ooxml:NNN` anchors. The `ooxml_id` field in `get_state_of_play`
+output is the stable OOXML `w:id` attribute that does not change between
+operations. Pass it as `anchor_id` in the format `ooxml:NNN` (e.g.,
+`ooxml:205`).
+
+This is not an issue when using `execute_pipeline` -- it handles ID remapping
+internally.
 
 ## Important Rules
 

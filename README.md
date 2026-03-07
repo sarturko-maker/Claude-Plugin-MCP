@@ -18,6 +18,7 @@ When you agree with a counterparty's change, the plugin accepts it -- the markup
 - **Multi-round counterparty response** with correctly layered tracked changes preserving the full audit trail
 - **Auto-detection** of clean vs redlined documents -- one command handles both workflows
 - **Comparison report gate** before applying changes to counterparty redlines -- review before committing
+- **Full-autonomy mode** (`/yolo-negotiation`) -- same negotiation logic with all checkpoints removed for when you trust the defaults
 - **Word-level surgical diffs** that change only the minimum necessary span of text
 - **Professional commenting** -- comments only where they add value, not on every change
 - **Configurable persona, authority framework, and playbooks** for different negotiation styles
@@ -106,7 +107,23 @@ final position on the non-compete.
 
 **What happens:** Claude layers your final positions on top of the existing multi-round markup. The seller sees the full negotiation history in Word's Review Pane -- every round's changes attributed to the correct party.
 
-### Example 4: Quick Boilerplate Review
+### Example 4: Full-Autonomy Negotiation
+
+**Scenario:** You have a straightforward counterparty response and want Claude to handle everything without checkpoints.
+
+```
+/yolo-negotiation
+
+Respond to the buyer's redlines on this services agreement. Standard
+commercial terms -- accept anything reasonable, push back on uncapped
+liability and overly broad IP assignments.
+
+[Attach: services_agreement_buyer_response.docx]
+```
+
+**What happens:** Claude ingests the document, shows a brief inline summary of counterparty actions, then immediately evaluates every change and executes the full pipeline -- no comparison report gate, no authority zone pauses, no supervised mode. You get the finished redlined `.docx` in one shot. Any amber/red zone items are noted in the final report for your review after the fact.
+
+### Example 5: Quick Boilerplate Review
 
 **Scenario:** You have received a standard NDA and just want to make sure the basics are covered.
 
@@ -133,7 +150,7 @@ These are fictional documents with no real parties or commercial terms. Use them
 
 ## MCP Tools
 
-The plugin exposes 9 MCP tools for contract negotiation:
+The plugin exposes 11 MCP tools for contract negotiation:
 
 | Tool | Purpose |
 |------|---------|
@@ -143,9 +160,11 @@ The plugin exposes 9 MCP tools for contract negotiation:
 | `redline_document` | Apply tracked changes to a clean document (first-pass workflow) |
 | `accept_changes` | Accept specific tracked changes by ID |
 | `counter_propose_changes` | Layer counter-proposals on top of existing tracked changes |
-| `add_comments` | Add standalone comments to document text |
+| `add_comments` | Add standalone comments to document text -- supports `ooxml:NNN` anchors |
 | `reply_to_comments` | Reply to existing comment threads |
 | `resolve_comments` | Mark comment threads as resolved |
+| `extract_styler_triplets` | Extract client-authored paragraphs with OOXML context for formatting review |
+| `splice_styler_fragments` | Splice corrected OOXML fragments back into the document |
 
 All tools have MCP `ToolAnnotations` declaring `readOnlyHint`, `destructiveHint`, and `openWorldHint` for Claude Desktop compliance.
 

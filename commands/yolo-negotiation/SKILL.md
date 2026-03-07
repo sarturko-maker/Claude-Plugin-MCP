@@ -1,17 +1,22 @@
 ---
-name: negotiate
+name: yolo-negotiation
 description: >
-  Negotiate a contract -- provide a Word document and instructions.
-  Handles both clean documents (first-pass redlines) and documents with
-  existing tracked changes (counterparty response with comparison report).
+  Negotiate a contract with full autonomy -- no checkpoints, no gates.
+  Provide a Word document and instructions. Claude reads, decides, and
+  executes the full pipeline without stopping. Configuration files still
+  inform judgment but never pause execution.
 disable-model-invocation: true
 ---
 
-# Contract Negotiation
+# Autonomous Contract Negotiation
 
-Single entry point for all contract negotiation. The user provides a Word
-document and instructions in one prompt. You detect the document type,
-route to the correct workflow, and produce a redlined `.docx`.
+Full-autonomy negotiation command. Same negotiation logic as `/negotiate` but
+with all checkpoints removed. Claude reads the document, makes every decision
+autonomously, and executes the full pipeline without stopping.
+
+Configuration files (persona, authority, playbook) are still loaded and used to
+**inform** Claude's judgment -- they shape decision quality but never gate
+execution.
 
 ## Step 1: Gather Context
 
@@ -59,25 +64,38 @@ markers:
 ### Path A -- Clean Document (First-Pass Redlining)
 
 Follow the negotiate-contract skill's First-Pass Redlining Workflow
-(Steps A through H). This creates initial tracked changes on the clean
-document based on the user's instructions.
+(Steps A through H) with these modifications:
+
+- **Step C (Authority Check):** Classify changes against the authority
+  framework for decision quality, but do NOT pause for amber or red zone
+  items. Note them in the final report instead. Proceed immediately.
+- **Step E (Commenting Rules):** Same rules apply unchanged.
 
 ### Path B -- Document with Tracked Changes (Counterparty Response)
 
 Follow the negotiate-contract skill's Counterparty Response Workflow
-(Steps 3 through 10). This workflow includes a **mandatory comparison report
-gate** at Step 3a.
+(Steps 3 through 10) with these modifications:
 
-**You MUST:**
+- **Step 3a (Comparison Report):** Show a brief inline summary of what the
+  counterparty did (accepted, pushed back, added new) but do NOT wait for
+  user confirmation. Display it and immediately proceed to evaluation.
+- **Step 5a (Authority Check):** Classify decisions against the authority
+  framework for decision quality, but do NOT pause for amber or red zone
+  items. Note them in the final report instead. Proceed immediately.
+- **Step 7 (Autonomy Mode):** Always fully autonomous. Do not offer supervised
+  mode. Build the full decision list and execute the pipeline in one go.
 
-1. Build the state of play (Step 3)
-2. Present the comparison report to the user (Step 3a)
-3. **WAIT for the user to confirm before proceeding**
+## Differences from `/negotiate`
 
-Do NOT proceed to Step 4 or beyond until the user explicitly confirms. This
-gate is non-negotiable -- every counterparty response goes through the
-comparison report first. The user may override recommendations, adjust
-positions, or give additional instructions before you proceed.
+| Gate | `/negotiate` | `/yolo-negotiation` |
+|------|-------------|---------------------|
+| Comparison report | Mandatory wait for confirmation | Shown inline, no wait |
+| Authority zones (amber) | Pause and ask for guidance | Note in report, proceed |
+| Authority zones (red) | Escalate immediately, do not act | Note in report, proceed |
+| Supervised mode | Available for complex negotiations | Never offered |
+
+All other negotiation logic is identical: materiality test, commenting rules,
+layering behaviour, edit precision, styler pass, and MCP tool usage.
 
 ## Quick Reference
 
