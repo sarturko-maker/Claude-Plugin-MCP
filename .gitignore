@@ -35,4 +35,4 @@ output/
 Thumbs.db
 
 # Planning (internal project management)
-# .planning/ is intentionally tracked
+.planning/
