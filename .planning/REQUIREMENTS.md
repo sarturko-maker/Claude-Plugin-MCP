@@ -9,7 +9,7 @@
 
 - [ ] **AUD-01**: All stale files removed (claude-v-claude/, .claude/settings.local.json)
 - [ ] **AUD-02**: plugin.json has correct version, repository URL (Claude-Plugin-MCP), and privacy_policy field
-- [ ] **AUD-03**: SKILL.md files match latest source (Phase 29 anchoring fix, commenting rules, validation gate, input validation)
+- [x] **AUD-03**: SKILL.md files match latest source (Phase 29 anchoring fix, commenting rules, validation gate, input validation)
 - [ ] **AUD-04**: start-mcp.sh uses generic paths or is clearly documented as requiring user customization
 - [ ] **AUD-05**: SECURITY.md reflects current tool count (11), current supported versions (1.8.x), and accurate audit findings
 - [ ] **AUD-06**: CONTRIBUTING.md and PRIVACY.md link to correct repo (Claude-Plugin-MCP)
@@ -26,8 +26,8 @@
 
 ### Sync
 
-- [ ] **SYN-01**: yolo-negotiation command synced back to ~/Claude-Plugin/commands/
-- [ ] **SYN-02**: defaults/ directory synced back to ~/Claude-Plugin/defaults/
+- [x] **SYN-01**: yolo-negotiation command synced back to ~/Claude-Plugin/commands/
+- [x] **SYN-02**: defaults/ directory synced back to ~/Claude-Plugin/defaults/
 
 ### Release
 
@@ -57,7 +57,7 @@
 |-------------|-------|--------|
 | AUD-01 | Phase 30 | Pending |
 | AUD-02 | Phase 30 | Pending |
-| AUD-03 | Phase 30 | Pending |
+| AUD-03 | Phase 30 | Complete |
 | AUD-04 | Phase 30 | Pending |
 | AUD-05 | Phase 30 | Pending |
 | AUD-06 | Phase 30 | Pending |
@@ -68,8 +68,8 @@
 | DOC-03 | Phase 30 | Pending |
 | DOC-04 | Phase 30 | Pending |
 | DOC-05 | Phase 30 | Pending |
-| SYN-01 | Phase 30 | Pending |
-| SYN-02 | Phase 30 | Pending |
+| SYN-01 | Phase 30 | Complete |
+| SYN-02 | Phase 30 | Complete |
 | REL-01 | Phase 31 | Pending |
 | REL-02 | Phase 31 | Pending |
 | REL-03 | Phase 31 | Pending |
