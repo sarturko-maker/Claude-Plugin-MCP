@@ -6,13 +6,29 @@ A Claude plugin that turns Claude into an agentic contract negotiation assistant
 
 Built on the [Adeu](https://github.com/dealfluence/adeu) OOXML redlining engine.
 
-## How It Works
+## Quick Start
+
+```bash
+git clone https://github.com/sarturko-maker/Claude-Plugin-MCP.git
+cd Claude-Plugin-MCP
+pip install .
+claude --plugin-dir ./
+```
+
+## Prerequisites
+
+- **Python 3.11+** (required by the Adeu dependency)
+- **pip** (for installing dependencies)
+- **git** (for cloning and for the adeu git dependency)
+- **Claude Code** (Anthropic's CLI)
+
+## What It Does
 
 When a counterparty sends back a redlined contract, their tracked changes stay visible. You never "reject" a change in Word -- that makes it vanish with no trace. Instead, the plugin layers your response on top of their markup: deleting their proposed text through your own redline and inserting your alternative, both attributed to you. The counterparty opens Word and sees everything -- their original change, your deletion of it, and your counter-proposal. Full audit trail, full transparency.
 
 When you agree with a counterparty's change, the plugin accepts it -- the markup is removed and the text becomes part of the clean document. That is the only time changes should vanish.
 
-## Features
+### Features
 
 - **First-pass redlining** of clean contracts with tracked changes and professional comments
 - **Multi-round counterparty response** with correctly layered tracked changes preserving the full audit trail
@@ -24,21 +40,40 @@ When you agree with a counterparty's change, the plugin accepts it -- the markup
 - **Configurable persona, authority framework, and playbooks** for different negotiation styles
 - **MCP tool annotations** for Claude Desktop directory compliance and security transparency
 
-## Installation
+## Commands
 
-### Prerequisites
+### `/negotiate`
 
-- Python 3.11 or later
-- Claude Desktop with plugin support
+The primary command. Walks you through contract negotiation step by step with checkpoints for review at each stage. Handles both first-pass redlining of clean documents and multi-round counterparty response with layered tracked changes.
 
-### Install
+### `/yolo-negotiation`
 
-Install the plugin through Claude Desktop's plugin management interface. Dependencies are installed automatically:
+Full-autonomy variant. Same negotiation logic as `/negotiate` but with all checkpoints removed. Use when you trust the defaults and want the finished redlined document in one shot. Amber/red zone authority items are noted in the final report for your review after the fact.
 
-- `adeu` -- OOXML redlining engine
-- `python-docx` -- Word document manipulation
-- `lxml` -- XML parsing
-- `pydantic` -- input validation
+## Architecture Overview
+
+```
+Claude-Plugin-MCP/
+  .claude-plugin/       Plugin metadata (plugin.json)
+  .mcp.json             MCP server configuration
+  skills/               Skill definitions for Claude
+  commands/             Slash commands (/negotiate, /yolo-negotiation)
+  src/                  MCP server source (78 Python files)
+    mcp_server/         Tool definitions and server entry point
+    ingestion/          Document parsing and validation
+    negotiation/        Negotiation logic and evaluation
+    pipeline/           Orchestration pipeline
+    config/             Three-level config fallback
+    models/             Pydantic data models
+    validation/         Output validation
+  defaults/             Shipped defaults (PERSONA.md, AUTHORITY.md, PLAYBOOK-template.md)
+  scripts/              start-mcp.sh launcher
+  samples/              Test documents for evaluation
+```
+
+**MCP server entry point:** `python -m src.mcp_server`
+
+**Three-level config fallback:** project directory > `~/.config/claude-negotiator/` > shipped defaults in `defaults/`
 
 ## Configuration
 
@@ -49,8 +84,6 @@ The plugin works out of the box with sensible defaults. For customisation, place
 | `PERSONA.md` | Define the negotiation persona (tone, formality, jurisdiction conventions) |
 | `AUTHORITY.md` | Set authority levels for different clause types (which changes need escalation) |
 | `PLAYBOOK-*.md` | Negotiation playbooks for specific deal types (e.g., `PLAYBOOK-SPA.md` for share purchase agreements) |
-
-If no custom configuration exists, the shipped defaults apply. The plugin searches in this order: project directory, then `~/.config/claude-negotiator/`, then built-in defaults.
 
 ## Usage Examples
 
@@ -167,6 +200,10 @@ The plugin exposes 11 MCP tools for contract negotiation:
 | `splice_styler_fragments` | Splice corrected OOXML fragments back into the document |
 
 All tools have MCP `ToolAnnotations` declaring `readOnlyHint`, `destructiveHint`, and `openWorldHint` for Claude Desktop compliance.
+
+## `.mcp.json` Setup
+
+The `.mcp.json` file uses `${CLAUDE_PLUGIN_ROOT}` to reference the plugin's `scripts/start-mcp.sh` launcher. Claude Code resolves this variable automatically when you load the plugin with `--plugin-dir`. No manual path editing is needed -- the variable points to wherever you cloned the repository.
 
 ## Privacy
 
