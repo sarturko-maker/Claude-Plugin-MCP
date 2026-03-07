@@ -1,0 +1,22 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.backends._legacy:_Backend"
+
+[project]
+name = "claude-contract-negotiator"
+version = "2.0.0"
+description = "Agentic contract negotiation assistant -- reviews counterparty redlines with layered Track Changes across multiple negotiation rounds, or creates first-pass redlines on clean documents."
+requires-python = ">=3.11"
+license = {text = "MIT"}
+
+dependencies = [
+    "adeu @ git+https://github.com/dealfluence/adeu.git@v0.7.0",
+    "diff-match-patch>=20230430",
+    "lxml>=4.9.0",
+    "mcp>=1.0.0",
+    "pydantic>=2.0.0",
+    "python-docx>=1.0.0",
+]
+
+[tool.setuptools.packages.find]
+include = ["src*"]
