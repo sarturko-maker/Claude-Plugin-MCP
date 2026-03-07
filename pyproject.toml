@@ -6,7 +6,7 @@ build-backend = "setuptools.build_meta"
 name = "claude-contract-negotiator"
 version = "2.0.0"
 description = "Agentic contract negotiation assistant -- reviews counterparty redlines with layered Track Changes across multiple negotiation rounds, or creates first-pass redlines on clean documents."
-requires-python = ">=3.11"
+requires-python = ">=3.12"
 license = {text = "MIT"}
 
 dependencies = [
