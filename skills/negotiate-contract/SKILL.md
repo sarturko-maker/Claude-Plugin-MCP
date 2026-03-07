@@ -499,14 +499,24 @@ A counter-proposal deletes the counterparty's text and inserts your
 alternative. Empty replacement_text produces a deletion with no alternative --
 that violates the audit trail principle.
 
+To reject a change entirely (restore original text), do NOT use counter_propose
+with empty text. Instead, either:
+- Leave the change out of your decisions (it remains as-is for the next round)
+- Or use counter_propose with the ORIGINAL text as the replacement_text
+
 WRONG:
 ```json
 {"change_id": "Chg:1", "action": "counter_propose", "replacement_text": ""}
 ```
 
-RIGHT:
+RIGHT -- counter-proposing with alternative text:
 ```json
 {"change_id": "Chg:1", "action": "counter_propose", "replacement_text": "within 45 days of receipt of invoice"}
+```
+
+RIGHT -- restoring original text by counter-proposing with it:
+```json
+{"change_id": "Chg:1", "action": "counter_propose", "replacement_text": "within 30 days of the date of invoice"}
 ```
 
 **Rule 2: No accept + counter_propose conflict on the same ID**
@@ -527,6 +537,11 @@ rejects unknown references.
 
 The pipeline accepts these action types: `accept`, `counter_propose`,
 `add_comment`, `reply`, `resolve`. Any other action type will be rejected.
+
+**Pre-submission check:** Before submitting decisions, verify every
+counter_propose has non-empty replacement_text. Scan your decision list for
+any `"action": "counter_propose"` entry and confirm `replacement_text` is a
+non-empty string. This is the most common validation failure.
 
 ### Step 8: Execute the Pipeline
 
