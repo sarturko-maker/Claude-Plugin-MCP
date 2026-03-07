@@ -24,7 +24,7 @@ The plugin is stateless. It does not maintain any persistent storage, databases,
 
 ## Contact
 
-For privacy questions, open a GitHub issue at [https://github.com/sarturko-maker/Claude-Plugin/issues](https://github.com/sarturko-maker/Claude-Plugin/issues) or email the maintainer.
+For privacy questions, open a GitHub issue at [https://github.com/sarturko-maker/Claude-Plugin-MCP/issues](https://github.com/sarturko-maker/Claude-Plugin-MCP/issues) or email the maintainer.
 
 ---
 

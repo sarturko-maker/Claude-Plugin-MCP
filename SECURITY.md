@@ -4,8 +4,8 @@
 
 | Version | Supported |
 |---------|-----------|
-| 1.4.x   | Yes       |
-| < 1.4   | No        |
+| 2.0.x   | Yes       |
+| < 2.0   | No        |
 
 ## Reporting a Vulnerability
 
@@ -45,7 +45,7 @@ The MCP server trusts Claude to provide valid parameters (Pydantic validates all
 
 ## MCP Tool Annotations
 
-All 9 registered MCP tools have `ToolAnnotations` declaring their behavior hints for Claude Desktop and directory compliance:
+All 11 registered MCP tools have `ToolAnnotations` declaring their behavior hints for Claude Desktop and directory compliance:
 
 | Tool | File | readOnlyHint | destructiveHint | idempotentHint | openWorldHint |
 |------|------|:------------:|:---------------:|:--------------:|:-------------:|
@@ -58,6 +58,8 @@ All 9 registered MCP tools have `ToolAnnotations` declaring their behavior hints
 | Resolve Comments | action_tools.py | false | true | false | false |
 | Execute Pipeline | pipeline_tool.py | false | true | false | false |
 | Redline Document | redline_tool.py | false | true | false | false |
+| Extract Styler Triplets | styler_tools.py | true | - | - | false |
+| Splice Styler Fragments | styler_tools.py | false | true | false | false |
 
 - `openWorldHint=false` on all tools: they operate only on local .docx files, never make external requests.
 - `idempotentHint=false` on write tools: running the same edits twice produces duplicate tracked changes.
@@ -71,8 +73,8 @@ Full security audit conducted 2026-03-05 using automated code scanning and manua
 
 - **Severity:** HIGH (Anthropic directory rejection risk)
 - **Status:** Fixed
-- **Description:** None of the 9 MCP tools had `ToolAnnotations` declaring `readOnlyHint` or `destructiveHint`. This is the #1 rejection reason for Anthropic directory submissions.
-- **Disposition:** Added `ToolAnnotations` to all 9 tools with correct hints (Phase 21, Plan 01). Covered by 51 parametrized tests.
+- **Description:** None of the 11 MCP tools had `ToolAnnotations` declaring `readOnlyHint` or `destructiveHint`. This is the #1 rejection reason for Anthropic directory submissions.
+- **Disposition:** Added `ToolAnnotations` to all 11 tools with correct hints (Phase 21, Plan 01). Covered by 51 parametrized tests.
 
 ### Finding 2: SSE Server Bound to 0.0.0.0
 
@@ -99,8 +101,8 @@ Full security audit conducted 2026-03-05 using automated code scanning and manua
 
 - **Severity:** MEDIUM
 - **Status:** Fixed
-- **Description:** All 9 MCP tool exception handlers used `f"Error ...: {error}"`, passing raw exception messages to the client. Exceptions from lxml, python-docx, and adeu may include full filesystem paths in their string representation, leaking internal directory structure.
-- **Disposition:** Created `src/mcp_server/error_sanitizer.py` with regex-based path stripping. Updated all 9 exception handlers to use `sanitize_error_message()` (Phase 21, Plan 02). Covered by 9 tests.
+- **Description:** All 11 MCP tool exception handlers used `f"Error ...: {error}"`, passing raw exception messages to the client. Exceptions from lxml, python-docx, and adeu may include full filesystem paths in their string representation, leaking internal directory structure.
+- **Disposition:** Created `src/mcp_server/error_sanitizer.py` with regex-based path stripping. Updated all 11 exception handlers to use `sanitize_error_message()` (Phase 21, Plan 02). Covered by 9 tests.
 
 ### Finding 6: Malicious .docx Processing (XXE/Zip Bombs)
 
@@ -210,4 +212,4 @@ We ask that reporters:
 ---
 
 *Security audit conducted: 2026-03-05*
-*Last updated: 2026-03-05*
+*Last updated: 2026-03-07*

@@ -4,7 +4,7 @@ Contributions are welcome for this proof of concept. Whether you are reporting a
 
 ## Reporting Bugs
 
-Open a [GitHub issue](https://github.com/sarturko-maker/Claude-Plugin/issues) with:
+Open a [GitHub issue](https://github.com/sarturko-maker/Claude-Plugin-MCP/issues) with:
 
 - A clear description of the bug
 - Steps to reproduce
@@ -13,7 +13,7 @@ Open a [GitHub issue](https://github.com/sarturko-maker/Claude-Plugin/issues) wi
 
 ## Suggesting Features
 
-Open a [GitHub issue](https://github.com/sarturko-maker/Claude-Plugin/issues) with:
+Open a [GitHub issue](https://github.com/sarturko-maker/Claude-Plugin-MCP/issues) with:
 
 - A description of the feature
 - The use case it addresses
