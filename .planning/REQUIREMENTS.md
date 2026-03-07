@@ -7,14 +7,14 @@
 
 ### Audit
 
-- [ ] **AUD-01**: All stale files removed (claude-v-claude/, .claude/settings.local.json)
-- [ ] **AUD-02**: plugin.json has correct version, repository URL (Claude-Plugin-MCP), and privacy_policy field
+- [x] **AUD-01**: All stale files removed (claude-v-claude/, .claude/settings.local.json)
+- [x] **AUD-02**: plugin.json has correct version, repository URL (Claude-Plugin-MCP), and privacy_policy field
 - [x] **AUD-03**: SKILL.md files match latest source (Phase 29 anchoring fix, commenting rules, validation gate, input validation)
-- [ ] **AUD-04**: start-mcp.sh uses generic paths or is clearly documented as requiring user customization
+- [x] **AUD-04**: start-mcp.sh uses generic paths or is clearly documented as requiring user customization
 - [ ] **AUD-05**: SECURITY.md reflects current tool count (11), current supported versions (1.8.x), and accurate audit findings
 - [ ] **AUD-06**: CONTRIBUTING.md and PRIVACY.md link to correct repo (Claude-Plugin-MCP)
-- [ ] **AUD-07**: .gitignore excludes .venv/, __pycache__/, *.pyc, output/, .planning/
-- [ ] **AUD-08**: No secrets, API keys, personal data, or unnecessary hardcoded paths in any file
+- [x] **AUD-07**: .gitignore excludes .venv/, __pycache__/, *.pyc, output/, .planning/
+- [x] **AUD-08**: No secrets, API keys, personal data, or unnecessary hardcoded paths in any file
 
 ### Documentation
 
@@ -55,14 +55,14 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| AUD-01 | Phase 30 | Pending |
-| AUD-02 | Phase 30 | Pending |
+| AUD-01 | Phase 30 | Complete |
+| AUD-02 | Phase 30 | Complete |
 | AUD-03 | Phase 30 | Complete |
-| AUD-04 | Phase 30 | Pending |
+| AUD-04 | Phase 30 | Complete |
 | AUD-05 | Phase 30 | Pending |
 | AUD-06 | Phase 30 | Pending |
-| AUD-07 | Phase 30 | Pending |
-| AUD-08 | Phase 30 | Pending |
+| AUD-07 | Phase 30 | Complete |
+| AUD-08 | Phase 30 | Complete |
 | DOC-01 | Phase 30 | Pending |
 | DOC-02 | Phase 30 | Pending |
 | DOC-03 | Phase 30 | Pending |
