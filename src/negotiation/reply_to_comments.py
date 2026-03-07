@@ -17,6 +17,10 @@ from src.models.author_config import AuthorConfig
 from src.models.change import TrackedChangeEntry
 from src.models.comment import CommentError, CommentReply, ReplyResult
 from src.negotiation.accept_helpers import validate_output_path
+from src.negotiation.comment_ids_helpers import (
+    get_or_create_comments_extensible_part,
+    get_or_create_comments_ids_part,
+)
 from src.negotiation.reply_helpers import (
     add_reply_comment,
     allocate_para_id,
@@ -119,6 +123,8 @@ def _apply_replies(
     """Apply all resolved replies to the document's comment XML."""
     comments_part = get_or_create_comments_part(document)
     extended_part = get_or_create_comments_extended_part(document)
+    ids_part = get_or_create_comments_ids_part(document)
+    extensible_part = get_or_create_comments_extensible_part(document)
     existing_ids = collect_existing_para_ids(document)
     next_id = get_next_comment_id(comments_part)
     timestamp = generate_timestamp(author_config.date_override)
@@ -137,6 +143,8 @@ def _apply_replies(
             parent_para_id=parent_para_id,
             para_id=para_id,
             initials=author_config.initials,
+            ids_part=ids_part,
+            extensible_part=extensible_part,
         )
         next_id += 1
 

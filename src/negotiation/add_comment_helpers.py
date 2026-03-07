@@ -101,12 +101,17 @@ def create_standalone_comment(
     text: str,
     para_id: str,
     initials: str | None = None,
+    ids_part: XmlPart | None = None,
+    extensible_part: XmlPart | None = None,
 ) -> None:
     """Create a standalone comment in comments.xml and commentsExtended.xml.
 
     Unlike add_reply_comment, this creates a root-level comment with no
     paraIdParent. The done attribute is set to "0" (unresolved).
     If initials is provided, sets w:initials attribute on the comment element.
+
+    When ids_part and extensible_part are provided, also writes entries to
+    commentsIds.xml and commentsExtensible.xml so Word displays the comment.
 
     Args:
         comments_part: The comments.xml OPC part.
@@ -117,6 +122,8 @@ def create_standalone_comment(
         text: The comment text content.
         para_id: The unique paraId for this comment.
         initials: Optional author initials for the comment bubble in Word.
+        ids_part: Optional commentsIds.xml OPC part.
+        extensible_part: Optional commentsExtensible.xml OPC part.
     """
     comment = OxmlElement("w:comment")
     comment.set(qn("w:id"), str(comment_id))
@@ -140,6 +147,17 @@ def create_standalone_comment(
     )
     comment_ex.set(f"{{{W15_NS}}}paraId", para_id)
     comment_ex.set(f"{{{W15_NS}}}done", "0")
+
+    # commentsIds.xml and commentsExtensible.xml entries
+    if ids_part is not None and extensible_part is not None:
+        from src.negotiation.comment_ids_helpers import (
+            add_comment_extensible_entry,
+            add_comment_id_entry,
+            generate_durable_id,
+        )
+        durable_id = generate_durable_id(para_id)
+        add_comment_id_entry(ids_part, para_id, durable_id)
+        add_comment_extensible_entry(extensible_part, durable_id, timestamp)
 
 
 _CONTENT_TAGS = frozenset({qn("w:r"), qn("w:ins"), qn("w:del")})

@@ -162,12 +162,17 @@ def add_reply_comment(
     parent_para_id: str,
     para_id: str,
     initials: str | None = None,
+    ids_part: XmlPart | None = None,
+    extensible_part: XmlPart | None = None,
 ) -> None:
     """Add a threaded reply to comments.xml and commentsExtended.xml.
 
     Creates w:comment with w14:paraId, and w15:commentEx with paraIdParent.
     Reply comments have NO body range markers (commentRangeStart/End).
     If initials is provided, sets w:initials attribute on the comment element.
+
+    When ids_part and extensible_part are provided, also writes entries to
+    commentsIds.xml and commentsExtensible.xml so Word displays the reply.
     """
     comment = OxmlElement("w:comment")
     comment.set(qn("w:id"), str(comment_id))
@@ -193,3 +198,14 @@ def add_reply_comment(
     comment_ex.set(f"{{{W15_NS}}}paraId", para_id)
     comment_ex.set(f"{{{W15_NS}}}paraIdParent", parent_para_id)
     comment_ex.set(f"{{{W15_NS}}}done", "0")
+
+    # commentsIds.xml and commentsExtensible.xml entries
+    if ids_part is not None and extensible_part is not None:
+        from src.negotiation.comment_ids_helpers import (
+            add_comment_extensible_entry,
+            add_comment_id_entry,
+            generate_durable_id,
+        )
+        durable_id = generate_durable_id(para_id)
+        add_comment_id_entry(ids_part, para_id, durable_id)
+        add_comment_extensible_entry(extensible_part, durable_id, timestamp)

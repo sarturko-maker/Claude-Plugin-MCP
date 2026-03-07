@@ -29,6 +29,10 @@ from src.negotiation.add_comment_helpers import (
     anchor_comment_to_tracked_change,
     create_standalone_comment,
 )
+from src.negotiation.comment_ids_helpers import (
+    get_or_create_comments_extensible_part,
+    get_or_create_comments_ids_part,
+)
 from src.negotiation.reply_helpers import (
     allocate_para_id,
     collect_existing_para_ids,
@@ -164,6 +168,8 @@ def _apply_comments(
     """
     comments_part = get_or_create_comments_part(document)
     extended_part = get_or_create_comments_extended_part(document)
+    ids_part = get_or_create_comments_ids_part(document)
+    extensible_part = get_or_create_comments_extensible_part(document)
     existing_ids = collect_existing_para_ids(document)
     next_id = get_next_comment_id(comments_part)
     timestamp = generate_timestamp(author_config.date_override)
@@ -184,6 +190,8 @@ def _apply_comments(
             body, comments_part, extended_part, existing_ids,
             next_id, author_config, timestamp,
             anchor_id, comment_text, ooxml_id, len(added),
+            ids_part=ids_part,
+            extensible_part=extensible_part,
         )
         if isinstance(result, AddedComment):
             added.append(result)
@@ -206,6 +214,8 @@ def _apply_single_comment(
     comment_text: str,
     ooxml_id: str | None,
     added_count: int,
+    ids_part: object | None = None,
+    extensible_part: object | None = None,
 ) -> AddedComment | FailedComment:
     """Apply a single comment, returning AddedComment or FailedComment."""
     try:
@@ -219,6 +229,8 @@ def _apply_single_comment(
             comments_part, extended_part, next_id,
             author_config.name, timestamp, comment_text, para_id,
             initials=author_config.initials,
+            ids_part=ids_part,
+            extensible_part=extensible_part,
         )
 
         return AddedComment(
