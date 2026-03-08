@@ -13,7 +13,7 @@ Usage:
 import logging
 
 from adeu import DocumentEdit
-from adeu.anchor import apply_anchored_edit
+from src.anchor import apply_anchored_edit
 from adeu.redline.mapper import DocumentMapper
 
 from src.pipeline.first_pass_result import EditOutcome
