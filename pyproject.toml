@@ -10,7 +10,7 @@ requires-python = ">=3.11"
 license = {text = "MIT"}
 
 dependencies = [
-    "adeu @ git+https://github.com/dealfluence/adeu.git@v0.7.0",
+    "adeu>=0.7.0",
     "diff-match-patch>=20230430",
     "lxml>=4.9.0",
     "mcp>=1.0.0",
