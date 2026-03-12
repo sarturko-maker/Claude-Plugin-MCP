@@ -1,3 +1,5 @@
+# TODO: reduce state_of_play output size — currently too verbose for
+# multi-round negotiations. Target <3k tokens. See token-optimization-roadmap.md.
 """State-of-play builder for tracked changes in .docx documents.
 
 Produces a flat list of all pending tracked changes with sequential

@@ -27,25 +27,31 @@ from docx.oxml.ns import qn
 from lxml import etree
 
 from src.pipeline.styler import OoxmlFragment, OoxmlTriplet
+from src.pipeline.styler_detection import needs_styler_review
 
 
 def extract_client_triplets(
     document_path: str,
     client_author: str,
 ) -> list[OoxmlTriplet]:
-    """Extract client-authored paragraphs with surrounding context.
+    """Extract client-authored paragraphs needing formatting review.
 
-    Walks all paragraphs in the document body (including those inside
-    tables) via iter(). For each paragraph containing w:ins or w:del
-    elements authored by the client, captures the paragraph above,
-    the target paragraph, and the paragraph below as raw OOXML strings.
+    Only extracts paragraphs where Adeu's formatting is unreliable:
+    (a) Paragraph-level insertions (wrong font/style inheritance)
+    (b) Table content (formatting inheritance unreliable in cells)
+    (c) Numbered lists and definition sub-clauses (numbering/indent)
+    (d) Style mismatches (inserted font differs from paragraph default)
+    (e) Mixed formatting boundaries (adjacent bold/italic/underline)
+    (f) Cross-references, bookmarks, and field codes
+
+    Skips simple inline text amendments — Adeu handles those correctly.
 
     Args:
         document_path: Path to the .docx document to extract from.
         client_author: Author name to match against w:author attributes.
 
     Returns:
-        List of OoxmlTriplet, one per client-authored paragraph.
+        List of OoxmlTriplet, one per qualifying paragraph.
     """
     document = Document(document_path)
     body = document.element.body
@@ -53,7 +59,7 @@ def extract_client_triplets(
     triplets: list[OoxmlTriplet] = []
 
     for idx, para in enumerate(paragraphs):
-        if not _has_client_tracked_changes(para, client_author):
+        if not _paragraph_needs_styler_review(para, client_author):
             continue
 
         above = _serialize_paragraph(paragraphs[idx - 1]) if idx > 0 else ""
@@ -106,26 +112,42 @@ def splice_corrected_fragments(
     document.save(output_path)
 
 
-def _has_client_tracked_changes(
+def _paragraph_needs_styler_review(
     paragraph: etree._Element,
     client_author: str,
 ) -> bool:
-    """Check if a paragraph contains w:ins or w:del by the client author.
+    """Check if a paragraph needs Styler formatting review.
 
-    Searches for w:ins and w:del elements anywhere within the paragraph
-    (including nested inside runs) where w:author matches the client.
+    Returns True for paragraphs containing client-authored w:ins
+    elements that trigger any edge-case detector. Two paths:
+    1. Paragraph-level insertion — parent is w:ins (always review).
+    2. Inline w:ins elements — checked individually against the
+       full edge-case suite in styler_detection.needs_styler_review().
+
+    Simple inline text amendments where formatting is inherited
+    correctly are skipped.
 
     Args:
         paragraph: An lxml element representing a w:p paragraph.
         client_author: Author name to match.
 
     Returns:
-        True if any tracked change in this paragraph is by the client.
+        True if this paragraph needs Styler review.
     """
-    for tag in ("w:ins", "w:del"):
-        for elem in paragraph.iter(qn(tag)):
-            if elem.get(qn("w:author")) == client_author:
-                return True
+    parent = paragraph.getparent()
+
+    # Case 1: paragraph-level insertion (w:ins wraps the whole w:p)
+    if parent is not None and parent.tag == qn("w:ins"):
+        if parent.get(qn("w:author")) == client_author:
+            return True
+
+    # Case 2: check each client w:ins against edge-case detectors
+    for ins in paragraph.iter(qn("w:ins")):
+        if ins.get(qn("w:author")) != client_author:
+            continue
+        if needs_styler_review(ins, paragraph):
+            return True
+
     return False
 
 
