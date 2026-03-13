@@ -22,6 +22,7 @@ from src.negotiation.comment_ids_helpers import (
 from src.negotiation.reply_helpers import (
     add_reply_comment,
     allocate_para_id,
+    anchor_reply_to_parent_range,
     collect_existing_para_ids,
     get_next_comment_id,
     get_or_create_comments_extended_part,
@@ -57,6 +58,7 @@ def reply_on_document(
     next_id = get_next_comment_id(comments_part)
     timestamp = generate_timestamp(author_config.date_override)
     comments_lookup = load_comments(document)
+    body = document.element.body
     outcomes: list[ActionOutcome] = []
 
     for entry, reply_text in resolutions:
@@ -76,6 +78,7 @@ def reply_on_document(
                 ids_part=ids_part,
                 extensible_part=extensible_part,
             )
+            anchor_reply_to_parent_range(body, entry.ooxml_id, next_id)
             outcomes.append(ActionOutcome(
                 action_type="reply",
                 target_id=entry.change_id,

@@ -24,6 +24,7 @@ from src.negotiation.comment_ids_helpers import (
 from src.negotiation.reply_helpers import (
     add_reply_comment,
     allocate_para_id,
+    anchor_reply_to_parent_range,
     collect_existing_para_ids,
     get_next_comment_id,
     get_or_create_comments_extended_part,
@@ -120,7 +121,7 @@ def _apply_replies(
     resolutions: list[tuple[TrackedChangeEntry, str]],
     author_config: AuthorConfig,
 ) -> None:
-    """Apply all resolved replies to the document's comment XML."""
+    """Apply all resolved replies to the document's comment XML and body anchors."""
     comments_part = get_or_create_comments_part(document)
     extended_part = get_or_create_comments_extended_part(document)
     ids_part = get_or_create_comments_ids_part(document)
@@ -129,6 +130,7 @@ def _apply_replies(
     next_id = get_next_comment_id(comments_part)
     timestamp = generate_timestamp(author_config.date_override)
     comments_lookup = load_comments(document)
+    body = document.element.body
 
     for entry, reply_text in resolutions:
         parent_para_id = _get_parent_para_id(entry, comments_lookup)
@@ -146,6 +148,7 @@ def _apply_replies(
             ids_part=ids_part,
             extensible_part=extensible_part,
         )
+        anchor_reply_to_parent_range(body, entry.ooxml_id, next_id)
         next_id += 1
 
 

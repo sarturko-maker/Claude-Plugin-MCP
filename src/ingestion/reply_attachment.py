@@ -1,9 +1,9 @@
 """Reply comment attachment for state-of-play thread awareness.
 
-Finds reply comments that have no commentReference in the document
-body (discovered only through commentsExtended.xml parent/child
-linkage) and nests them as TrackedChangeEntry objects in the parent
-comment entry's replies list.
+Finds reply comments not already picked up by the document body walker
+(discovered through commentsExtended.xml parent/child linkage) and
+nests them as TrackedChangeEntry objects in the parent comment entry's
+replies list.
 
 Used by state_of_play.py after the document walk to add thread
 structure to the flat list of entries.

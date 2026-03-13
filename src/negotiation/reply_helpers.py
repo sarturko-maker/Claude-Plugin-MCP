@@ -4,9 +4,11 @@ Provides low-level functions for creating threaded reply comments:
 - Getting or creating the comments and commentsExtended OPC parts
 - Generating unique comment IDs and paragraph IDs (paraId)
 - Building and appending reply comment XML elements
+- Anchoring reply comments in the document body inside the parent's range
 
-Reply comments live only in comments.xml and commentsExtended.xml -- they
-do NOT have commentRangeStart/End/Reference markers in the document body.
+Reply comments need both comments.xml / commentsExtended.xml entries AND
+commentRangeStart/End/Reference anchors in document.xml. Word requires
+body anchors for ALL comments (including replies) to render them.
 """
 
 from lxml import etree
@@ -168,8 +170,10 @@ def add_reply_comment(
     """Add a threaded reply to comments.xml and commentsExtended.xml.
 
     Creates w:comment with w14:paraId, and w15:commentEx with paraIdParent.
-    Reply comments have NO body range markers (commentRangeStart/End).
     If initials is provided, sets w:initials attribute on the comment element.
+
+    Body anchors (commentRangeStart/End/Reference) must be added separately
+    via anchor_reply_to_parent_range() — Word requires them for all comments.
 
     When ids_part and extensible_part are provided, also writes entries to
     commentsIds.xml and commentsExtensible.xml so Word displays the reply.
@@ -209,3 +213,76 @@ def add_reply_comment(
         durable_id = generate_durable_id(para_id)
         add_comment_id_entry(ids_part, para_id, durable_id)
         add_comment_extensible_entry(extensible_part, durable_id, timestamp)
+
+
+def anchor_reply_to_parent_range(
+    body: etree._Element, parent_ooxml_id: str, reply_comment_id: int
+) -> None:
+    """Anchor a reply comment in the document body inside the parent's range.
+
+    Word requires commentRangeStart/End/Reference in document.xml for ALL
+    comments, including threaded replies. This function finds the parent
+    comment's existing range markers and nests the reply's markers inside them:
+
+    - reply commentRangeStart inserted just after parent's commentRangeStart
+    - reply commentRangeEnd inserted just before parent's commentRangeEnd
+    - reply commentReference run inserted just after parent's commentReference run
+
+    Args:
+        body: The document body element (w:body).
+        parent_ooxml_id: The w:id of the parent comment in document.xml.
+        reply_comment_id: The numeric comment ID for the reply's markers.
+    """
+    parent_id_str = str(parent_ooxml_id)
+    reply_id_str = str(reply_comment_id)
+
+    parent_range_start = _find_marker(body, "w:commentRangeStart", parent_id_str)
+    parent_range_end = _find_marker(body, "w:commentRangeEnd", parent_id_str)
+    parent_ref_run = _find_comment_reference_run(body, parent_id_str)
+
+    if parent_range_start is None or parent_range_end is None:
+        return  # Parent has no body anchors — skip gracefully
+
+    # Insert reply commentRangeStart right after parent's commentRangeStart
+    parent_start_container = parent_range_start.getparent()
+    start_idx = list(parent_start_container).index(parent_range_start)
+    reply_range_start = OxmlElement("w:commentRangeStart")
+    reply_range_start.set(qn("w:id"), reply_id_str)
+    parent_start_container.insert(start_idx + 1, reply_range_start)
+
+    # Insert reply commentRangeEnd right before parent's commentRangeEnd
+    parent_end_container = parent_range_end.getparent()
+    end_idx = list(parent_end_container).index(parent_range_end)
+    reply_range_end = OxmlElement("w:commentRangeEnd")
+    reply_range_end.set(qn("w:id"), reply_id_str)
+    parent_end_container.insert(end_idx, reply_range_end)
+
+    # Insert reply commentReference run right after parent's commentReference run
+    if parent_ref_run is not None:
+        ref_container = parent_ref_run.getparent()
+        ref_idx = list(ref_container).index(parent_ref_run)
+        reply_ref_run = OxmlElement("w:r")
+        reply_ref = OxmlElement("w:commentReference")
+        reply_ref.set(qn("w:id"), reply_id_str)
+        reply_ref_run.append(reply_ref)
+        ref_container.insert(ref_idx + 1, reply_ref_run)
+
+
+def _find_marker(
+    body: etree._Element, tag: str, comment_id: str
+) -> etree._Element | None:
+    """Find a commentRangeStart or commentRangeEnd element by w:id."""
+    for elem in body.iter(qn(tag)):
+        if elem.get(qn("w:id")) == comment_id:
+            return elem
+    return None
+
+
+def _find_comment_reference_run(
+    body: etree._Element, comment_id: str
+) -> etree._Element | None:
+    """Find the w:r element containing a commentReference with the given w:id."""
+    for ref in body.iter(qn("w:commentReference")):
+        if ref.get(qn("w:id")) == comment_id:
+            return ref.getparent()
+    return None
